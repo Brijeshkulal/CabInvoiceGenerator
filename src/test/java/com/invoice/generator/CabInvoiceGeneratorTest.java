@@ -56,4 +56,15 @@ public class CabInvoiceGeneratorTest {
 	        assertEquals(3, invoiceSummery3.noOFRides);
 	        assertEquals(1532, (int)invoiceSummery3.averageFarePerRide);
 	    }
+	 
+	 @Test
+	    void calculateFareForRides() {
+	        double distance = 10;
+	        int time = 60;
+	        double getFareForNormalRide = generator.calculateFare(distance, time, "normal");
+	        assertEquals(160, getFareForNormalRide,0.0);
+	        double getFareForPremiumRide= generator.calculateFare(distance, time, "premium");
+	        assertEquals(270, getFareForPremiumRide,0.0);
+	    }
+
 }
