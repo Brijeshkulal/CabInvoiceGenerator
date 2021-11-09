@@ -1,13 +1,18 @@
 package com.invoice.generator;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.Test;
 
 public class CabInvoiceGeneratorTest {
+	CabInvoiceGenerator generator = new CabInvoiceGenerator();
 
 	@Test
 	public void givenDistanceTime_ShouldReturnTotalFare(){
-        CabInvoiceGenerator generator = new CabInvoiceGenerator();
         double distance=2.0;
         int time=5;
         double fare= generator.calculateFare(distance,time);
@@ -16,13 +21,39 @@ public class CabInvoiceGeneratorTest {
 
 
 	@Test
-	public void givenMultipleRides_ShouldReturnTotalFare(){
-		CabInvoiceGenerator generator = new CabInvoiceGenerator();
-		Ride[] rides = {new Ride(3.0, 6),
-                   new Ride(0.4, 1)
-		};
-		double fare =generator.calculateFare1(rides);
-		Assert.assertEquals(40,fare);
-	}
+    public void totalFareForMultipleRides() {
+        Ride[] rides = { new Ride(1.0, 20), new Ride(50, 52), new Ride(85, 100) };
 
+        double totalFare = generator.calculateFare1(rides);
+        Assert.assertEquals(1532, totalFare,0.0);
+    }
+	
+	@Test
+    public void EnhancedInvoice() {
+        Ride[] rides = { new Ride(1.0, 20), new Ride(50, 52), new Ride(85, 100) };
+
+        CabInvoiceSummary invoiceSummery = generator.generateInvoiceForMultipleRides(rides);
+        assertEquals(1532, invoiceSummery.totalFare,0.0);
+        assertEquals(3, invoiceSummery.noOFRides);
+        assertEquals(510, (int) invoiceSummery.averageFarePerRide);
+    }
+	
+	 @Test
+	   public void InvoiceService() {
+	        Map<Integer,CabInvoiceSummary> map= new HashMap<Integer, CabInvoiceSummary>();
+
+	        Ride[] rides = { new Ride(1.0, 20), new Ride(50, 52), new Ride(85, 100) };
+	        CabInvoiceSummary invoiceSummery = generator.generateInvoiceForMultipleRides(rides);
+	        map.put(1, invoiceSummery);
+
+	        CabInvoiceSummary invoiceSummery1 = generator.generateInvoiceForMultipleRides(rides);
+	        map.put(1, invoiceSummery1);
+
+	        CabInvoiceSummary invoiceSummery2 = generator.generateInvoiceForMultipleRides(rides);
+	        map.put(1, invoiceSummery2);
+	        CabInvoiceSummary invoiceSummery3=map.get(1);
+	        assertEquals(4596, invoiceSummery3.totalFare,0.0);
+	        assertEquals(3, invoiceSummery3.noOFRides);
+	        assertEquals(1532, (int)invoiceSummery3.averageFarePerRide);
+	    }
 }
